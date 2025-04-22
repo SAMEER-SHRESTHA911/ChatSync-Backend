@@ -1,17 +1,13 @@
 package com.sameer.ChatApp.dto;
 
-import jakarta.validation.constraints.NotBlank;
-
 public class WebSocketActionRequest {
+    private Long userId;
 
-    @NotBlank(message = "Username is required")
-    private String username;
-
-    public String getUsername() {
-        return username;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

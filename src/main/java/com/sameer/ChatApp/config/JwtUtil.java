@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.spec.SecretKeySpec;
+import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
 
 @Component
@@ -14,12 +17,15 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private  String jwtSecret;
 
-    public String generateToken(User user){
+    public String generateToken(User user) {
+        byte[] keyBytes = Base64.getDecoder().decode(jwtSecret);
+        Key key = new SecretKeySpec(keyBytes, "HmacSHA256");
+
         return Jwts.builder()
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
-                .signWith(SignatureAlgorithm.HS256, jwtSecret)
+                .signWith(SignatureAlgorithm.HS256,key)
                 .compact();
     }
 

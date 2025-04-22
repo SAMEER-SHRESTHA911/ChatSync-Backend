@@ -1,6 +1,7 @@
 package com.sameer.ChatApp.controller;
 
 import com.sameer.ChatApp.config.JwtUtil;
+import com.sameer.ChatApp.dto.LoginResponse;
 import com.sameer.ChatApp.model.User;
 import com.sameer.ChatApp.service.UserService;
 import jakarta.validation.Valid;
@@ -130,16 +131,16 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
 //        logger.info("Received login request for username: {}", request.getUsername());
         try {
             User user = userService.authenticateByEmail(request.getEmail(), request.getPassword());
             String token = jwtUtil.generateToken(user);
 //            logger.info("Login successful for user: {}", request.getUsername());
-            return ResponseEntity.ok(new AuthResponse("Login Successful", token, HttpStatus.OK.value()));
+            return ResponseEntity.ok(new LoginResponse("Login Successful", token, HttpStatus.OK.value(), user.getId()));
         } catch (UserService.AuthenticationException e) {
 //            logger.error("Login failed: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse(e.getMessage(), null, HttpStatus.UNAUTHORIZED.value()));
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new LoginResponse(e.getMessage(), null, HttpStatus.UNAUTHORIZED.value(), null));
         }
     }
 }

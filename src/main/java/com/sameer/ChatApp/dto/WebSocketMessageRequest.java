@@ -5,36 +5,25 @@ import jakarta.validation.constraints.NotNull;
 
 public class WebSocketMessageRequest {
 
-    @NotBlank(message = "Username is required")
-    private String username;
+    @NotBlank(message = "Message is required")
+    private String message;
 
-    @NotBlank(message = "Content is required")
-    private String content;
+    @NotNull(message = "Room ID is required")
+    private Long roomId;
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
-    public String getUsername() {
-        return username;
+    public String getMessage() {
+        return message;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public String getContent() {
-        return content;
+    public Long getRoomId() {
+        return roomId;
     }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setRoomId(Long roomId) {
+        this.roomId = roomId;
     }
 }
