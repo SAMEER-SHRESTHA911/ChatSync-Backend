@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatRoomService {
@@ -50,8 +51,15 @@ public class ChatRoomService {
         return new ChatRoomDTO(savedRoom.getId(), savedRoom.getName(), savedRoom.getCreatedAt(), userDTO);
     }
 
-    public List<ChatRoom> listRooms(){
-        return chatRoomRepository.findAll();
+    public List<ChatRoomDTO> listRooms(){
+        return chatRoomRepository.findAll().stream()
+                .map(room -> new ChatRoomDTO(
+                        room.getId(),
+                        room.getName(),
+                        room.getCreatedAt(),
+                        new UserDTO(room.getCreatedBy().getId(), room.getCreatedBy().getUsername())
+                ))
+                .collect(Collectors.toList());
     }
 
     public void joinRoom(Long roomId, Long userId){
@@ -71,5 +79,15 @@ public class ChatRoomService {
         membership.setUser(user);
         membership.setRoom(room);
         roomMembershipRepository.save(membership);
+    }
+
+    public void leaveRoom(Long roomId, Long userId){
+        ChatRoom room = chatRoomRepository.findById(roomId)
+                .orElseThrow(() -> new IllegalArgumentException("Room not found with ID: " + roomId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + userId));
+        RoomMembership roomMembership = roomMembershipRepository.findByUserIdAndRoomId(userId, roomId)
+                .orElseThrow(() -> new IllegalArgumentException("User is not a member of this room"));
+        roomMembershipRepository.delete(roomMembership);
     }
 }
